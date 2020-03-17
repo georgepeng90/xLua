@@ -129,14 +129,44 @@ _set_default(struct _stringpool *pool, struct _field *f , int ptype, const char 
 
 static void
 _register_field(struct pbc_rmessage * field, struct _field * f, struct _stringpool *pool) {
+	int origin_label;
 	f->id = pbc_rmessage_integer(field, "number", 0 , 0);
 	f->type = pbc_rmessage_integer(field, "type", 0 , 0);	// enum
-	f->label = pbc_rmessage_integer(field, "label", 0, 0) - 1; // LABEL_OPTIONAL = 0
+	origin_label = pbc_rmessage_integer(field, "label", 0, 0) - 1; // LABEL_OPTIONAL = 0
+	f->label = origin_label;
+
+	switch (f->type) {
+	case PTYPE_DOUBLE:
+	case PTYPE_FLOAT:
+	case PTYPE_INT64:
+	case PTYPE_UINT64:
+	case PTYPE_INT32:
+	case PTYPE_FIXED64:
+	case PTYPE_FIXED32:
+	case PTYPE_BOOL:
+	case PTYPE_UINT32:
+	case PTYPE_ENUM:
+	case PTYPE_SFIXED32:
+	case PTYPE_SFIXED64:
+	case PTYPE_SINT32:
+	case PTYPE_SINT64:
+		if (f->label == LABEL_REPEATED) {
+			f->label = LABEL_PACKED;
+		}
+		break;
+	default:
+		break;
+	}
+
 	if (pbc_rmessage_size(field , "options") > 0) {
 		struct pbc_rmessage * options = pbc_rmessage_message(field, "options" , 0);
-		int packed = pbc_rmessage_integer(options , "packed" , 0 , NULL);
-		if (packed) {
-			f->label = LABEL_PACKED;
+		if (pbc_rmessage_size(options, "packed") > 0) {
+			int packed = pbc_rmessage_integer(options, "packed", 0, NULL);
+			if (packed) {
+				f->label = LABEL_PACKED;
+			} else {
+				f->label = origin_label;
+			}
 		}
 	}
 	f->type_name.n = pbc_rmessage_string(field, "type_name", 0 , NULL) +1;	// abandon prefix '.' 
