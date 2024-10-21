@@ -234,11 +234,6 @@ struct ToLuaHandler {
 		current_.submit(L);
 		return true;
 	}
-	bool RawNumber(const char* str, SizeType length, bool copy) {
-		lua_pushlstring(L, str, length);
-		current_.submit(L);
-		return true;
-	}
 	bool String(const char* str, SizeType length, bool copy) {
 		lua_pushlstring(L, str, length);
 		current_.submit(L);
