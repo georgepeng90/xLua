@@ -344,8 +344,8 @@ if(NOT DEFINED DEPLOYMENT_TARGET)
     set(DEPLOYMENT_TARGET "2.0"
             CACHE STRING "Minimum SDK version to build for." )
   else()
-    # Unless specified, SDK version 9.0 is used by default as minimum target version (iOS, tvOS).
-    set(DEPLOYMENT_TARGET "9.0"
+    # Unless specified, SDK version 12.0 is used by default as minimum target version (iOS, tvOS).
+    set(DEPLOYMENT_TARGET "12.0"
             CACHE STRING "Minimum SDK version to build for." )
   endif()
   message(STATUS "Using the default min-version since DEPLOYMENT_TARGET not provided!")
